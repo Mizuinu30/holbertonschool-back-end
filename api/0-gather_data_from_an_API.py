@@ -1,50 +1,23 @@
 #!/usr/bin/python3
-"""
-This module uses Python to make requests to a REST API.
-fix
-It fetches data about a specific employee's tasks
-and prints a summary of the tasks completed and the
-titles of the completed tasks.
-"""
+"""Gather data from an API"""
 import requests
 import sys
 
+if len(sys.argv) > 1 and sys.argv[1].isdigit():
+    user_id = sys.argv[1]
+    user = requests.get(
+        'https://jsonplaceholder.typicode.com/users/{}'.format(user_id)).json()
+    todos = requests.get(
+        'https://jsonplaceholder.typicode.com/users/{}/todos'.
+        format(user_id)).json()
 
-# Get the employee ID from the command line arguments
-employee_id = sys.argv[1]
+    done_tasks = [task for task in todos if task.get('completed') is True]
+    total_tasks = len(todos)
 
-# Send a GET request to the API to get the user data
-user_response = requests.get(
-    f'https://jsonplaceholder.typicode.com/users/{employee_id}')
+    print('Employee {} is done with tasks({}/{}):'.format(
+        user['name'], len(done_tasks), total_tasks))
 
-# Parse the response data as JSON
-data = user_response.json()
-
-# Extract the employee's name from the data
-employee_name = data['name']
-
-# Send another GET request to the API to get the todo data
-todos_response = requests.get(
-    f'https://jsonplaceholder.typicode.com/todos?userId={employee_id}')
-
-# Parse the todo data as JSON
-todos_data = todos_response.json()
-
-# Calculate the total number of tasks
-total_todos = len(todos_data)
-
-# Calculate the number of completed tasks
-completed_todos = sum(1 for task in todos_data if task['completed'])
-
-# Print the first line of the output
-print(
-    f'Employee {employee_name} is done with
-    tasks({completed_todos}/{total_todos}): ')
-
-# Print the title of each completed task
-for task in todos_data:
-    if task['completed']:
-        print('\t ' + task['title'])
-
-if __name__ == '__main__':
-    pass
+    for task in done_tasks:
+        print('\t {}'.format(task['title']))
+else:
+    print("Usage: {} <employee_id>".format(sys.argv[0]))
