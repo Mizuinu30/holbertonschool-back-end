@@ -5,6 +5,7 @@ import sys
 
 
 def print_todo_progress(employee_id):
+    """ prints the title of all completed tasks of an employee"""
     user_response = requests.get(
         f'https://jsonplaceholder.typicode.com/users/{employee_id}')
     employee_name = user_response.json()['name']
