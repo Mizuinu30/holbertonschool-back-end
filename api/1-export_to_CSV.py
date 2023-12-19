@@ -1,34 +1,32 @@
 #!/usr/bin/python3
-"""Script to return info about todo list progress in csv format"""
+"""
+This script uses the JSONPlaceholder API to fetch data
+about a specific employee
+and exports a summary of the tasks to a CSV file.
+"""
 
 import csv
 import requests
-from requests import get
-from sys import argv
+import sys
 
 
-def information_employee(id_employee):
-    # Get user data
-    user_url = f"https://jsonplaceholder.typicode.com/users/{id_employee}"
-    user_response = requests.get(user_url)
-    user_data = user_response.json()
-    username = user_data['username']
+def export_to_csv(employee_id):
+    user_response = requests.get(
+        f'https://jsonplaceholder.typicode.com/users/{employee_id}')
+    data = user_response.json()
+    employee_name = data['name']
 
-    # Get TODO data
-    todo_url = f"https://jsonplaceholder.typicode.com/todos?userId={id_employee}"
-    todo_response = requests.get(todo_url)
-    todo_data = todo_response.json()
+    todos_response = requests.get(
+        f'https://jsonplaceholder.typicode.com/todos?userId={employee_id}')
+    todos_data = todos_response.json()
 
-    # Prepare data for CSV
-    data = []
-    for task in todo_data:
-        data.append([id_employee, username, task['completed'], task['title']])
-
-    # Write data to CSV
-    with open(f"{id_employee}.csv", "w", newline='') as csvfile:
-        csvwriter = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        csvwriter.writerows(data)
+    with open(f'{employee_id}.csv', 'w', newline='') as csvfile:
+        taskwriter = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
+        for task in todos_data:
+            taskwriter.writerow(
+                [employee_id, employee_name, task['completed'], task['title']])
 
 
 if __name__ == "__main__":
-    information_employee(argv[1])
+    employee_id = sys.argv[1]
+    export_to_csv(employee_id)
