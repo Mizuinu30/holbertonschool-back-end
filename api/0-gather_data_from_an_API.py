@@ -23,13 +23,14 @@ def get_employee_todo_progress(employee_id):
 
     # Display progress information
     print(
-        f"Employee {user_data['name']} is done with tasks ({done_tasks}/{total_tasks}):")
+        f"Employee {user_data['name']} is done with tasks
+        ({done_tasks}/{total_tasks}): ")
     print(f"\t{user_data['name']}: {done_tasks}/{total_tasks}")
 
     # Display completed task titles
     for task in todo_data:
         if task['completed']:
-            print(f"\t\t{task['title']}")
+            print(f"\t{task['title']}")
 
 
 if __name__ == "__main__":
