@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Script that uses REST API to return information about an employee"""
 
-from sys import argv
 from requests import get
+from sys import argv
 
 
 def information_employee():
