@@ -1,17 +1,16 @@
 #!/usr/bin/python3
-"""Script that uses REST API to return information about an employee"""
-
+"""Script to return info about todo list progress"""
 from requests import get
 from sys import argv
 
 
 def information_employee():
-    """Returns information about an employee"""
+    """Returns information about employees"""
     id_employee = int(argv[1])
     id_employee = int(argv[1])
-    id_employee_name = ""
-    number_of_done_tasks = 0
-    total_number_of_tasks = 0
+    employee_name = ""
+    number_of_done_task = 0
+    total_number_of_task = 0
     task_title = []
 
     url_users = 'https://jsonplaceholder.typicode.com/users'
@@ -25,21 +24,21 @@ def information_employee():
         response_json_tod = response_two.json()
 
         for user in response_json_usr:
-            if (user['Id'] == id_employee):
+            if (user['id'] == id_employee):
                 employee_name = user['name']
 
                 for tod in response_json_tod:
                     if tod['userId'] == id_employee:
-                        total_number_of_tasks += 1
+                        total_number_of_task += 1
                         if tod['completed'] is True:
-                            number_of_done_tasks += 1
+                            number_of_done_task += 1
                             task_title.append(tod['title'])
 
-        print("Employee {} is done with tasks({}/{}):"
-              .format(employee_name, number_of_done_tasks,
-                      total_number_of_tasks))
+        print('Employee {} is done with tasks({}/{}):'
+              .format(employee_name, number_of_done_task,
+                      total_number_of_task))
         for title in task_title:
-            print("\t {}".format(title))
+            print('\t {}'.format(title))
 
 
 if __name__ == "__main__":
