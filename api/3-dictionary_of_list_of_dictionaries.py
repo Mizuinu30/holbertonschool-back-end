@@ -1,33 +1,41 @@
 #!/usr/bin/python3
-"""Script to export data in the JSON format"""
-
+"""
+This module uses Python to make requests to a REST API.
+q
+It fetches data about a specific employee's tasks
+and prints a summary of the tasks completed and the
+titles of the completed tasks.
+"""
 import json
 import requests
-from sys import argv
 
 
-def information_employee(id_employee):
-    """Returns information about employees"""
-    employee_name = ""
-    task_data = []
+# Reuet data for users
+users = requests.get('https://jsonplaceholder.typicode.com/users').json()
 
-    url_users = 'https://jsonplaceholder.typicode.com/users'
-    url_todos = 'https://jsonplaceholder.typicode.com/todos'
+# Make an empty dictionary
+all_tasks = {}
 
-    response_one = requests.get(url_users)
-    response_two = requests.get(url_todos)
+# Loop over all users
+for user in users:
+    # get the user id and name
+    user_id = user['id']
+    user_name = user['username']
 
-    if response_one.status_code == 200:
-        response_json_usr = response_one.json()
-        response_json_tod = response_two.json()
+    # Get the list
+    todo_list = requests.get(
+        f'https://jsonplaceholder.typicode.com/todos?userId={user_id}').json()
 
-        for user in response_json_usr:
-            if user['id'] == id_employee:
-                employee_name = user['username']
+    # Format the task as indicated
+    task_list = [{'username': user_name, 'task': task.get(
+        'title'), 'completed': task.get('completed')} for task in todo_list]
 
-                for tod in response_json_tod:
-                    if tod['userId'] == id_employee:
-                        task_data.append(tod)
+    # Adds the task to the dictionary
+    all_tasks[user_id] = task_list
 
-        # Call the function to export data to JSON
-        export_to_json(id_employee, employee_name, task_data)
+# Export using Json format
+with open('todo_all_employees.json', 'w') as jsonfile:
+    json.dump(all_tasks, jsonfile)
+
+if __name__ == '__main__':
+    pass
